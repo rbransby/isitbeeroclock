@@ -3,6 +3,8 @@ import styled, { css } from 'react-emotion';
 
 import Countdown from './Countdown';
 
+import {askPermission, subscribeUser} from '../pushNotifications'
+
 const Container = styled('div')`
   text-align: center;
   height: 100vh;
@@ -96,6 +98,11 @@ class Beer extends Component {
     );
   };
 
+  subscribeToNotifications() {
+    askPermission();
+    subscribeUser();
+  }
+
   render() {
     return (
       <Container>
@@ -116,6 +123,7 @@ class Beer extends Component {
             this.state.beerTime && this.state.iamgeLoaded ? 'show' : ''
           }
         />
+        <button style={{'zIndex':1000}} onClick={this.subscribeToNotifications}>subscribe</button>
       </Container>
     );
   }
