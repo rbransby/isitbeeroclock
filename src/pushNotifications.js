@@ -1,8 +1,7 @@
 
-
 function askPermission() {
-  return new Promise(function(resolve, reject) {
-    const permissionResult = Notification.requestPermission(function(result) {
+  return new Promise(function (resolve, reject) {
+    const permissionResult = Notification.requestPermission(function (result) {
       resolve(result);
     });
 
@@ -10,31 +9,46 @@ function askPermission() {
       permissionResult.then(resolve, reject);
     }
   })
-  .then(function(permissionResult) {
-    if (permissionResult !== 'granted') {
-      throw new Error('We weren\'t granted permission.');
-    }
-  });
+    .then(function (permissionResult) {
+      if (permissionResult !== 'granted') {
+        throw new Error('We weren\'t granted permission.');
+      }
+    });
 }
 
-function subscribeUser() {
+function subscribeUser() { //TODO: Flatten out promise structure so we can return the promise and make it thenable elsewhere
   const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
   navigator.serviceWorker.getRegistration()
-  .then((registration) => {
-    registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: applicationServerKey
-    })
-    .then(function(subscription) {
-      console.log('User is subscribed.');
-      console.log(subscription);
-      //updateSubscriptionOnServer(subscription);  
-    })
-    .catch(function(err) {
-      console.log('Failed to subscribe the user: ', err);
+    .then((registration) => {
+      registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey
+      })
+        .then(function (subscription) {
+          console.log('User is subscribed.');
+          console.log(subscription);
+          //updateSubscriptionOnServer(subscription);  
+        })
+        .catch(function (err) {
+          console.log('Failed to subscribe the user: ', err);
+        });
     });
-  });
-  
+}
+
+async function isUserSubscribed() {
+  var isSubscribed = false;
+  return await navigator.serviceWorker.getRegistration()
+  .then((registration) => {    
+    if (!registration)
+    {
+      return null;
+    }
+    return registration.pushManager.getSubscription()
+  })
+  .then(function (subscription) {
+    isSubscribed = !(subscription === null);    
+    return isSubscribed;                  
+  });      
 }
 
 const applicationServerPublicKey = 'BP3KYW8aPpClaCjP2MUceUNTwqBSaK88kTnl6SWg0k134zAy_dNNub8LfGHo83bbkm-LUGAd_aLKM0z_4cpUlY8';
@@ -54,4 +68,4 @@ function urlB64ToUint8Array(base64String) {
   return outputArray;
 }
 
-export {askPermission, subscribeUser};
+export { askPermission, subscribeUser, isUserSubscribed };

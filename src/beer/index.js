@@ -3,7 +3,7 @@ import styled, { css } from 'react-emotion';
 
 import Countdown from './Countdown';
 
-import {askPermission, subscribeUser} from '../pushNotifications'
+import {askPermission, subscribeUser, isUserSubscribed} from '../pushNotifications'
 
 const Container = styled('div')`
   text-align: center;
@@ -54,11 +54,17 @@ const Image = styled('img')`
   }
 `;
 
+const GetNotifiedButton = styled('button')`
+  z-indes: 1000;
+  font: comic-sans;
+`
+
 class Beer extends Component {
   state = {
     beerTime: false,
     timeLeft: false,
-    iamgeLoaded: false
+    iamgeLoaded: false,
+    showGetNotifiedButton: true,
   };
 
   beerTime = {
@@ -72,6 +78,11 @@ class Beer extends Component {
   componentDidMount() {
     this.isItTime();
     this.timeout = setInterval(this.isItTime, 1 * 1000);
+    
+  }
+
+  componentWillMount() {
+    this.checkIfSubscribed();
   }
 
   componentWillUnmount() {
@@ -101,9 +112,18 @@ class Beer extends Component {
   subscribeToNotifications() {
     askPermission();
     subscribeUser();
+    this.checkIfSubscribed();
+  }
+
+  checkIfSubscribed() {
+    isUserSubscribed()
+    .then((isUserSubscribed) => {
+      this.setState({showGetNotifiedButton: !isUserSubscribed});    
+    });
   }
 
   render() {
+    let showGetNotifiedButton = this.state.showGetNotifiedButton;
     return (
       <Container>
         <Question>Is it beer o'clock?</Question>
@@ -123,7 +143,9 @@ class Beer extends Component {
             this.state.beerTime && this.state.iamgeLoaded ? 'show' : ''
           }
         />
-        <button style={{'zIndex':1000}} onClick={this.subscribeToNotifications}>subscribe</button>
+        { showGetNotifiedButton &&
+          <GetNotifiedButton onClick={this.subscribeToNotifications.bind(this)}>Don't miss a beer. Get Notified!</GetNotifiedButton>
+        }
       </Container>
     );
   }

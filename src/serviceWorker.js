@@ -68,9 +68,9 @@ function registerValidSW(swUrl, config) {
               console.log('New content is available; please refresh.');
 
               // Execute callback
-              if (config.onUpdate) {
-                config.onUpdate(registration);
-              }
+              // if (config.onUpdate) {
+              //   config.onUpdate(registration);
+              // }
             } else {
               // At this point, everything has been precached.
               // It's the perfect time to display a
@@ -78,9 +78,9 @@ function registerValidSW(swUrl, config) {
               console.log('Content is cached for offline use.');
 
               // Execute callback
-              if (config.onSuccess) {
-                config.onSuccess(registration);
-              }
+              // if (config.onSuccess) {
+              //   config.onSuccess(registration);
+              // }
             }
           }
         };
