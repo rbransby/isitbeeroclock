@@ -16,23 +16,22 @@ function askPermission() {
     });
 }
 
-function subscribeUser() { //TODO: Flatten out promise structure so we can return the promise and make it thenable elsewhere
+function subscribeUser() { 
   const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
-  navigator.serviceWorker.getRegistration()
+  return navigator.serviceWorker.getRegistration()
     .then((registration) => {
-      registration.pushManager.subscribe({
+      return registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: applicationServerKey
-      })
-        .then(function (subscription) {
-          console.log('User is subscribed.');
-          console.log(subscription);
-          //updateSubscriptionOnServer(subscription);  
-        })
-        .catch(function (err) {
-          console.log('Failed to subscribe the user: ', err);
-        });
-    });
+    })})
+    .then(function (subscription) {
+      console.log('User is subscribed.');
+      console.log(subscription);
+      //updateSubscriptionOnServer(subscription); //TODO: This is where we need to fire off the subscription data to a backend server. 
+    })
+    .catch(function (err) {
+      console.log('Failed to subscribe the user: ', err);
+    });    
 }
 
 async function isUserSubscribed() {

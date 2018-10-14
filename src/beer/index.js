@@ -55,8 +55,8 @@ const Image = styled('img')`
 `;
 
 const GetNotifiedButton = styled('button')`
-  z-indes: 1000;
-  font: comic-sans;
+  z-index: 1000;
+  font-family: cursive;
 `
 
 class Beer extends Component {
@@ -111,8 +111,7 @@ class Beer extends Component {
 
   subscribeToNotifications() {
     askPermission();
-    subscribeUser();
-    this.checkIfSubscribed();
+    subscribeUser().then(() => this.checkIfSubscribed());    
   }
 
   checkIfSubscribed() {
