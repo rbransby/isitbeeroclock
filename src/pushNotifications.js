@@ -16,38 +16,48 @@ function askPermission() {
     });
 }
 
-function subscribeUser() { 
+function subscribeUser() {
   const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
   return navigator.serviceWorker.getRegistration()
     .then((registration) => {
       return registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: applicationServerKey
-    })})
+      })
+    })
     .then(function (subscription) {
       console.log('User is subscribed.');
       console.log(subscription);
-      //updateSubscriptionOnServer(subscription); //TODO: This is where we need to fire off the subscription data to a backend server. 
+      fetch('https://localhost:44348/api/subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(subscription)
+      }).then(function (response) {
+        if (response.ok) {
+          console.log('Successfully subscribed for Push Notifications');
+        } else {
+          console.log('Failed to store the Push Notifications subscription on server');
+        }
+      })
     })
     .catch(function (err) {
       console.log('Failed to subscribe the user: ', err);
-    });    
+    });
 }
 
 async function isUserSubscribed() {
   var isSubscribed = false;
   return await navigator.serviceWorker.getRegistration()
-  .then((registration) => {    
-    if (!registration)
-    {
-      return null;
-    }
-    return registration.pushManager.getSubscription()
-  })
-  .then(function (subscription) {
-    isSubscribed = !(subscription === null);    
-    return isSubscribed;                  
-  });      
+    .then((registration) => {
+      if (!registration) {
+        return null;
+      }
+      return registration.pushManager.getSubscription()
+    })
+    .then(function (subscription) {
+      isSubscribed = !(subscription === null);
+      return isSubscribed;
+    });
 }
 
 const applicationServerPublicKey = 'BP3KYW8aPpClaCjP2MUceUNTwqBSaK88kTnl6SWg0k134zAy_dNNub8LfGHo83bbkm-LUGAd_aLKM0z_4cpUlY8';
