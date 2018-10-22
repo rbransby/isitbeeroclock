@@ -26,12 +26,17 @@ function subscribeUser() {
       })
     })
     .then(function (subscription) {
-      console.log('User is subscribed.');
+      console.log('User is subscribed.');      
+      subscription["timeoffset"] = new Date().getTimezoneOffset() / -60;      
       console.log(subscription);
+      var payLoad = {};
+      payLoad["pushSubscription"] = subscription;
+      payLoad["timeoffset"] = new Date().getTimezoneOffset() / -60;
+      console.log(JSON.stringify(payLoad));
       fetch('https://localhost:44348/api/subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subscription)
+        body: JSON.stringify(payLoad)
       }).then(function (response) {
         if (response.ok) {
           console.log('Successfully subscribed for Push Notifications');
