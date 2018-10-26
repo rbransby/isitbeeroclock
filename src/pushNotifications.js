@@ -33,7 +33,7 @@ function subscribeUser() {
       payLoad["pushSubscription"] = subscription;
       payLoad["timeoffset"] = new Date().getTimezoneOffset() / -60;
       console.log(JSON.stringify(payLoad));
-      fetch('https://iiboapi.bransby.com.au:8334/api/subscription', {
+      fetch('https://iiboapi.bransby.com.au/api/subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payLoad)
