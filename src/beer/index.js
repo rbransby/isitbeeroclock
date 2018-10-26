@@ -115,10 +115,19 @@ class Beer extends Component {
   }
 
   checkIfSubscribed() {
-    isUserSubscribed()
-    .then((isUserSubscribed) => {
-      this.setState({showGetNotifiedButton: !isUserSubscribed});    
-    });
+    // if this browser doesnt support push or service workers, dont bother showing the button
+    if (!('serviceWorker' in navigator) || !('PushManager' in window))
+    {
+      this.setState({showGetNotifiedButton: false});
+    }
+    else
+    {
+      isUserSubscribed()
+      .then((isUserSubscribed) => {
+        this.setState({showGetNotifiedButton: !isUserSubscribed});    
+      });
+    }
+    
   }
 
   render() {
